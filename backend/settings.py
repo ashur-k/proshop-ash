@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -116,7 +117,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
+if 'DATABASE_URL' in os.environ:
+    DATABASES = {
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+        }    
+else:
+    print("sqlite in use")
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+    
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -128,15 +141,19 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'proshop',
-        'USER': 'ashurkanwal',
-        'PASSWORD': os.environ.get('DB_PASS'),
-        'HOST':'proshop-identifier.cyyx1doyhyff.eu-west-2.rds.amazonaws.com',
-        'PORT':'5432'
+    'default': dj_database_url.parse('postgres://sxdqxklhvcjzey:aacee705930dabda858c37e68e6243b5109df1e04b9bfeedca8f92bce512d5b1@ec2-54-247-137-184.eu-west-1.compute.amazonaws.com:5432/dc2a6sq28isho4'),
     }
-}
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'proshop',
+#         'USER': 'ashurkanwal',
+#         'PASSWORD': os.environ.get('DB_PASS'),
+#         'HOST':'proshop-identifier.cyyx1doyhyff.eu-west-2.rds.amazonaws.com',
+#         'PORT':'5432'
+#     }
+# }
 
 
 # Password validation
@@ -189,13 +206,13 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 CORS_ALLOW_ALL_ORIGINS = True
 
 AWS_QUERYSTRING_AUTH = False
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-AWS_STORAGE_BUCKET_NAME = 'proshop-ash'
-AWS_S3_REGION_NAME = 'eu-west-2'
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+# AWS_STORAGE_BUCKET_NAME = 'proshop-ash'
+# AWS_S3_REGION_NAME = 'eu-west-2'
+# AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
 if os.getcwd() == '/app':
     DEBUG = False
