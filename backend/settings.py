@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
+import cloudinary_storage
 from datetime import timedelta
 from pathlib import Path
 import dj_database_url
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'storages',
+    'cloudinary_storage',
     
     'base.apps.BaseConfig',
 ]
@@ -189,6 +191,7 @@ USE_L10N = True
 USE_TZ = True
 
 
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
@@ -203,9 +206,22 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = BASE_DIR / 'static/images'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+
+####################################
+# NEW SETTING STORING IMAGES ON CLOUDINARY REOMVED FROM AWS ##
+####################################
+
+if 'CLOUDINARY' in os.environ:
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': os.environ.get('cloudinary_cloud_name'),
+        'API_KEY': os.environ.get('cloudinary_api_key'),
+        'API_SECRET': os.environ.get('cloudinary_api_secret')
+        }
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 CORS_ALLOW_ALL_ORIGINS = True
 
-AWS_QUERYSTRING_AUTH = False
+# AWS_QUERYSTRING_AUTH = False
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # AWS_STORAGE_BUCKET_NAME = 'proshop-ash'
